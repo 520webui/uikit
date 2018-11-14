@@ -12,7 +12,8 @@
 //                  `uk-preserve-width`
 //                  `uk-border-*`
 //                  `uk-box-shadow-*`
-//                  `uk-box-shadow-bottom`
+//                  `uk-box-decoration-primary`
+//                  `uk-box-decoration-secondary`
 //                  `uk-dropcap`
 //                  `uk-logo`
 //                  `uk-blend-*`
@@ -39,10 +40,12 @@
 
 @box-shadow-duration:                           0.1s;
 
-@box-shadow-bottom-height:                      30px;
-@box-shadow-bottom-border-radius:               100%;
-@box-shadow-bottom-background:                  #444;
-@box-shadow-bottom-blur:                        20px;
+@box-decoration-primary-height:                 30px;
+@box-decoration-primary-border-radius:          100%;
+@box-decoration-primary-background:             #444;
+@box-decoration-primary-blur:                   20px;
+
+@box-decoration-secondary-background:           rgba(100,100,100,0.1);
 
 @dropcap-margin-right:                          10px;
 @dropcap-font-size:                             ((@global-line-height * 3) * 1em);
@@ -288,8 +291,16 @@
 .uk-box-shadow-hover-xlarge:hover { box-shadow: @global-xlarge-box-shadow; }
 
 
-/* Box-shadow bottom
+/* Box-decoration
  ========================================================================== */
+
+/*
+ * Reserved modifiers to create a background decoration for any box
+ * Implemented by the theme
+ */
+
+.uk-box-decoration-primary,
+.uk-box-decoration-secondary { position: relative; }
 
 /*
  * 1. Set position.
@@ -300,32 +311,48 @@
 
 @supports (filter: blur(0)) {
 
-    .uk-box-shadow-bottom {
-        display: inline-block;
-        position: relative;
-        max-width: 100%;
-        vertical-align: middle;
-    }
-
-    .uk-box-shadow-bottom::before {
+    .uk-box-decoration-primary::before {
         content: '';
         /* 1 */
         position: absolute;
-        bottom: -@box-shadow-bottom-height;
+        bottom: -@box-decoration-primary-height;
         left: 0;
         right: 0;
         /* 2 */
-        height: @box-shadow-bottom-height;
-        border-radius: @box-shadow-bottom-border-radius;
-        background: @box-shadow-bottom-background;
-        filter: blur(@box-shadow-bottom-blur);
-        .hook-box-shadow-bottom;
+        height: @box-decoration-primary-height;
+        border-radius: @box-decoration-primary-border-radius;
+        background: @box-decoration-primary-background;
+        filter: blur(@box-decoration-primary-blur);
+        .hook-box-decoration-primary;
     }
 
     /* 3 */
-    .uk-box-shadow-bottom > * { position: relative; }
+    .uk-box-decoration-primary > * { position: relative; }
 
 }
+
+/*
+ * 1. Set position.
+ * 2. Set Transform.
+ * 3. Set style.
+ */
+
+.uk-box-decoration-secondary::before {
+    content: '';
+    /* 1 */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    /* 2 */
+    transform: translate(-30px, 30px);
+    /* 3 */
+    background: @box-decoration-secondary-background;
+    .hook-box-decoration-secondary;
+}
+
 
 
 /* Drop cap
@@ -473,7 +500,8 @@
 .hook-utility-misc;
 
 .hook-panel-scrollable() {}
-.hook-box-shadow-bottom() {}
+.hook-box-decoration-primary() {}
+.hook-box-decoration-secondary() {}
 .hook-dropcap() {}
 .hook-logo() {}
 .hook-logo-hover() {}
@@ -487,6 +515,14 @@
 @inverse-logo-hover-color:                     @inverse-global-color;
 
 .hook-inverse() {
+
+    .uk-box-decoration-primary {
+        .hook-inverse-box-decoration-primary;
+    }
+
+    .uk-box-decoration-secondary {
+        .hook-inverse-box-decoration-secondary;
+    }
 
     .uk-dropcap::first-letter,
     .uk-dropcap p:first-of-type::first-letter {
@@ -509,6 +545,8 @@
 
 }
 
+.hook-inverse-box-decoration-primary() {}
+.hook-inverse-box-decoration-secondary() {}
 .hook-inverse-dropcap() {}
 .hook-inverse-logo() {}
 .hook-inverse-logo-hover() {}
