@@ -7,6 +7,19 @@
 // Variables
 // ========================================================================
 
+//
+// New
+//
+
+@box-decoration-default-height:                 30px;
+@box-decoration-default-border-radius:          100%;
+@box-decoration-default-background:             #444;
+@box-decoration-default-blur:                   20px;
+
+@box-decoration-primary-transform-horizontal:   -30px;
+@box-decoration-primary-transform-vertical:     30px;
+@box-decoration-primary-background:             rgba(100,100,100,0.1);
+
 
 // Panel
 // ========================================================================
@@ -14,10 +27,92 @@
 .hook-panel-scrollable() {}
 
 
-// Box-shadow bottom
+// Mask
 // ========================================================================
 
-.hook-box-shadow-bottom() {}
+.hook-mask-default() {
+    -webkit-mask-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/stampTiles.svg);
+    mask-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/stampTiles.svg);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+.hook-mask-primary() {
+    -webkit-mask-box-image-source: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/stampTiles.svg);
+    mask-border: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/stampTiles.svg);
+    -webkit-mask-box-image-slice: 30 fill;
+    mask-border-slice: 30;
+    -webkit-mask-box-image-repeat: round;
+    mask-border-repeat: round;
+    // Firefox Fallback
+    mask-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/stampTiles.svg);
+    mask-size: 100% 100%;
+}
+
+
+// Box-decoration
+// ========================================================================
+
+//
+// 1. Set position.
+// 2. Set style.
+// 3. Blur doesn't work on pseudo elements with negative `z-index` in Edge.
+//    Solved by using `before` and add position context to child elements.
+//
+
+.hook-box-decoration-default() {
+
+    position: relative;
+
+    @supports (filter: blur(0)) {
+
+        &::before {
+            content: '';
+            // 1
+            position: absolute;
+            bottom: -@box-decoration-default-height;
+            left: 0;
+            right: 0;
+            // 2
+            height: @box-decoration-default-height;
+            border-radius: @box-decoration-default-border-radius;
+            background: @box-decoration-default-background;
+            filter: blur(@box-decoration-default-blur);
+        }
+
+        // 3
+        & > * { position: relative; }
+
+    }
+
+}
+
+//
+// 1. Set position.
+// 2. Set transform.
+// 3. Set style.
+//
+
+.hook-box-decoration-primary() {
+
+    position: relative;
+
+    &::before {
+        content: '';
+        // 1
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        // 2
+        transform: translate(@box-decoration-primary-transform-horizontal, @box-decoration-primary-transform-vertical);
+        // 3
+        background: @box-decoration-primary-background;
+    }
+
+}
 
 
 // Drop cap
@@ -45,6 +140,9 @@
 
 // Inverse
 // ========================================================================
+
+.hook-inverse-box-decoration-default() {}
+.hook-inverse-box-decoration-primary() {}
 
 .hook-inverse-dropcap() {}
 
