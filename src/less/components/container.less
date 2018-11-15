@@ -8,6 +8,8 @@
 //                  `uk-container-expand`
 //                  `uk-container-expand-left`
 //                  `uk-container-expand-right`
+//                  `uk-container-item-padding-remove-left`
+//                  `uk-container-item-padding-remove-right`
 //
 // ========================================================================
 
@@ -30,13 +32,14 @@
  ========================================================================== */
 
 /*
- * 1. Using `border-box` so the padding doesn't affect the expand modifier classes
- * 2. It's only needed to set the max-width for the for medium breakpoint.
+ * 1. Box sizing has to be `content-box` so the max-width is always the same and
+ *    unaffected by the padding on different breakpoints. It's important for the size modifiers.
  */
 
 .uk-container {
     /* 1 */
-    box-sizing: border-box;
+    box-sizing: content-box;
+    max-width: @container-max-width;
     margin-left: auto;
     margin-right: auto;
     padding-left: @container-padding-horizontal;
@@ -57,8 +60,6 @@
 @media (min-width: @breakpoint-medium) {
 
     .uk-container {
-        /* 2 */
-        max-width: ~'calc(@{container-max-width} + (@{container-padding-horizontal-m} * 2))';
         padding-left: @container-padding-horizontal-m;
         padding-right: @container-padding-horizontal-m;
     }
@@ -96,24 +97,17 @@
 /* Size modifier
  ========================================================================== */
 
-/* Phone landscape and bigger */
-@media (min-width: @breakpoint-small) {
+.uk-container-xsmall { max-width: @container-xsmall-max-width; }
 
-    .uk-container-xsmall { max-width: ~'calc(@{container-xsmall-max-width} + (@{container-padding-horizontal-s} * 2))'; }
-    .uk-container-small { max-width: ~'calc(@{container-small-max-width} + (@{container-padding-horizontal-s} * 2))'; }
+.uk-container-small { max-width: @container-small-max-width; }
 
-}
-
-/* Tablet landscape and bigger */
-@media (min-width: @breakpoint-medium) {
-
-    .uk-container-xsmall { max-width: ~'calc(@{container-xsmall-max-width} + (@{container-padding-horizontal-m} * 2))'; }
-    .uk-container-small { max-width: ~'calc(@{container-small-max-width} + (@{container-padding-horizontal-m} * 2))'; }
-    .uk-container-large { max-width: ~'calc(@{container-large-max-width} + (@{container-padding-horizontal-m} * 2))'; }
-
-}
+.uk-container-large { max-width: @container-large-max-width; }
 
 .uk-container-expand { max-width: none; }
+
+
+/* Expand modifier
+ ========================================================================== */
 
 /*
  * Expand one side only
@@ -126,10 +120,10 @@
 @media (min-width: @breakpoint-small) {
 
     .uk-container-expand-left.uk-container-xsmall,
-    .uk-container-expand-right.uk-container-xsmall { max-width: ~'calc(50% + (@{container-xsmall-max-width} / 2) + @{container-padding-horizontal-s})'; }
+    .uk-container-expand-right.uk-container-xsmall { max-width: ~'calc(50% + (@{container-xsmall-max-width} / 2) - @{container-padding-horizontal-s})'; }
 
     .uk-container-expand-left.uk-container-small,
-    .uk-container-expand-right.uk-container-small { max-width: ~'calc(50% + (@{container-small-max-width} / 2) + @{container-padding-horizontal-s})'; }
+    .uk-container-expand-right.uk-container-small { max-width: ~'calc(50% + (@{container-small-max-width} / 2) - @{container-padding-horizontal-s})'; }
 
 }
 
@@ -137,16 +131,53 @@
 @media (min-width: @breakpoint-medium) {
 
     .uk-container-expand-left,
-    .uk-container-expand-right { max-width: ~'calc(50% + (@{container-max-width} / 2) + @{container-padding-horizontal-m})'; }
+    .uk-container-expand-right { max-width: ~'calc(50% + (@{container-max-width} / 2) - @{container-padding-horizontal-m})'; }
 
     .uk-container-expand-left.uk-container-xsmall,
-    .uk-container-expand-right.uk-container-xsmall { max-width: ~'calc(50% + (@{container-xsmall-max-width} / 2) + @{container-padding-horizontal-m})'; }
+    .uk-container-expand-right.uk-container-xsmall { max-width: ~'calc(50% + (@{container-xsmall-max-width} / 2) - @{container-padding-horizontal-m})'; }
 
     .uk-container-expand-left.uk-container-small,
-    .uk-container-expand-right.uk-container-small { max-width: ~'calc(50% + (@{container-small-max-width} / 2) + @{container-padding-horizontal-m})'; }
+    .uk-container-expand-right.uk-container-small { max-width: ~'calc(50% + (@{container-small-max-width} / 2) - @{container-padding-horizontal-m})'; }
 
     .uk-container-expand-left.uk-container-large,
-    .uk-container-expand-right.uk-container-large { max-width: ~'calc(50% + (@{container-large-max-width} / 2) + @{container-padding-horizontal-m})'; }
+    .uk-container-expand-right.uk-container-large { max-width: ~'calc(50% + (@{container-large-max-width} / 2) - @{container-padding-horizontal-m})'; }
+
+}
+
+
+/* Item
+ ========================================================================== */
+
+/*
+ * Utility classes to reset container padding on the left or right side
+ * Note: It has to be negative margin on the item, because it's specific to the item.
+ */
+
+.uk-container-item-padding-remove-left,
+.uk-container-item-padding-remove-right { width: ~'calc(100% + @{container-padding-horizontal})' }
+
+.uk-container-item-padding-remove-left { margin-left: -@container-padding-horizontal; }
+.uk-container-item-padding-remove-right { margin-right: -@container-padding-horizontal; }
+
+/* Phone landscape and bigger */
+@media (min-width: @breakpoint-small) {
+
+    .uk-container-item-padding-remove-left,
+    .uk-container-item-padding-remove-right { width: ~'calc(100% + @{container-padding-horizontal-s})' }
+
+    .uk-container-item-padding-remove-left { margin-left: -@container-padding-horizontal-s; }
+    .uk-container-item-padding-remove-right { margin-right: -@container-padding-horizontal-s; }
+
+}
+
+/* Tablet landscape and bigger */
+@media (min-width: @breakpoint-medium) {
+
+    .uk-container-item-padding-remove-left,
+    .uk-container-item-padding-remove-right { width: ~'calc(100% + @{container-padding-horizontal-m})' }
+
+    .uk-container-item-padding-remove-left { margin-left: -@container-padding-horizontal-m; }
+    .uk-container-item-padding-remove-right { margin-right: -@container-padding-horizontal-m; }
 
 }
 
